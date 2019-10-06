@@ -1,0 +1,9 @@
+body,
+p,ul,li{
+    border: 0;
+    padding: 0;
+}
+
+li{
+    list-style-type: none;
+}
