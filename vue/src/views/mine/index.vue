@@ -3,9 +3,9 @@
         <div class="mine">
             <div class="mine-header">
                 <div class="mine-header__avatar">
-                    <img src=""/>
+                    <img :src="userInfo.avatar"/>
                 </div>
-                <p class="mine-header__username">{{username}}</p>
+                <p class="mine-header__username">{{userInfo.username}}</p>
             </div>
             <div class="mine-body">
                 <ul class="mine-list">
@@ -24,13 +24,18 @@
 </template>
 
 <script>
+import {GET, POST} from '@/common/axios.js';
 export default {
     props: {
 
     },
     data() {
         return {
-            username: '南村杂货铺老板',
+            userInfo:{
+                username: '南村杂货铺老板',
+                avatar: '',
+            },
+            
             profile: ["美团红包", "收货地址","常见问题","美团协议与说明","退出登录"]
         };
     },
@@ -38,7 +43,7 @@ export default {
 
     },
     created() {
-
+        this.getUserInfo()
     },
     mounted() {
 
@@ -47,7 +52,26 @@ export default {
 
     },
     methods: {
-
+        getUserInfo(){
+            let token = this.Cookies.get('token');
+            let options = {
+                url: '/apis/user/userInfo',
+                params: {
+                    token
+                }
+            };
+            GET(options).then(res => {
+                if(res.data.code == 200) {
+                    console.log('123456789', res);
+                    this.userInfo = res.data.user;
+                } else if (res.data.code == 401) {
+                    this.$router.push('login');
+                }
+            }).catch(err => {
+                console.log('errrrrrrrrrrrrrr', err);
+                this.$toast(err.data.message);
+            })
+        }
     },
     components: {
 
@@ -76,6 +100,11 @@ export default {
             margin: auto;
             background: url(//p1.meituan.net/codeman/e32b47a07b818bf9a1d4086a882c18a62282.png) no-repeat;
             background-size: 100%;
+            img{
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            }
         }
     }
     &-body{

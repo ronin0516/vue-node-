@@ -38,14 +38,19 @@ const router = new Router({
             component: () => import('@/views/register')
         },
         {
-            path: '/circle/create',
+            path: '/create',
             name: 'create',
-            component: () => import('@/views/circle/create.vue')
+            component: () => import('@/views/article/create.vue')
         },
         {
-            path: '/circle/detail/:id',
+            path: '/detail/:id',
             name: 'detail',
-            component: () => import('@/views/circle/detail.vue')
+            component: () => import('@/views/article/detail.vue')
+        },
+        {
+            path: '/search',
+            name: 'search',
+            component: () => import('@/views/search.vue')
         }
     ]
 })

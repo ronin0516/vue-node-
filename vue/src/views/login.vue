@@ -58,14 +58,17 @@ export default {
                 POST(options).then(res => {
                     console.log('1234567890', res)
                     if(res.data.code == 200) {
-                        Cookies.set('token', res.data.token)
+                        this.Cookies.set('token', res.data.token)
                         this.$router.push('index')
                         console.log('请求成功', res)
                     } else {
+                        // this.$toast(res.data.message)
                         console.log('请求失败', res)
                     }
+                    this.$toast(res.data.message)
                 }).catch(err => {
                     console.log('走err1234567890', err)
+                    this.$toast(err.data.message)
                 })
             }
         }

@@ -6,11 +6,22 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors');
-
+const session = require('koa-session');
+app.keys = ['mt-blog'];
+const CONFIG= {
+  key: 'koa:sess',
+  maxAge: 86400000, // 这个是确定cookie的有效期，默认是一天
+  overwrite: true,
+  httpOnly: true, // 表示是否可以通过javascript来修改，设成true会更加安全
+  signed: true,
+  rolling: false, // 这两个都是涉及到cookie有效期的更新策略
+  renew: false // 这两个都是涉及到cookie有效期的更新策略
+};
 const router = require('./routes/index')
 require('./mongodb/db');
 // error handler
 onerror(app)
+app.use(session(CONFIG, app))
 
 // middlewares
 app.use(bodyparser({

@@ -1,12 +1,22 @@
 <template>
     <div class="index-wrap">
         <div class="index">
-            <div class="search-wrap" @click="onSearch">
-                <van-search 
-                    placeholder="请输入搜索关键词" 
-                    disabled show-action>
-                        <div slot="action" @click="onSearch">搜索</div>
-                </van-search>
+            <div class="header-nav">
+                <div class="header-container">
+                    <div class="nav-item">
+                        <div class="nav-item__left">
+                            <span class="text" 
+                                v-for="(item, index) in navList" 
+                                :key="index"
+                                :class="{'selected': currentIndex == (index+1)}"
+                                >{{item}}</span>
+                        </div>
+                        <div class="nav-item__right" @click.stop="toPage">
+                            <img class="icon" src="@/assets/images/sousuo.png" data-path="search"/>
+                            <img class="icon" src="@/assets/images/bianji.png" data-path="create"/>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="index-header">
                 <van-swipe :autoplay="3000" :height="100" indicator-color="white">
@@ -29,7 +39,7 @@
                         finished-text="没有更多了"
                         @load="onLoad"
                         >
-                <circleList :list="list"></circleList>
+                <articleList :list="list"></articleList>
                     </van-list>
                 </van-pull-refresh>
             </div>
@@ -38,6 +48,7 @@
 </template>
 
 <script>
+import {GET, POST} from '../../common/axios';
 export default {
   props: {},
   data() {
@@ -46,6 +57,11 @@ export default {
         'https://img.yzcdn.cn/vant/apple-1.jpg',
         'https://img.yzcdn.cn/vant/apple-2.jpg'
       ],
+      navList: [
+          "首页",
+          "头条"
+      ],
+      currentIndex: 1,
       list: [],
       loading: false,
         isLoading: false,
@@ -53,13 +69,32 @@ export default {
     };
   },
   computed: {},
-  created() {},
+  created() {
+      this.getArticles()
+  },
   mounted() {},
   watch: {},
   methods: {
-      onSearch(){
-          this.$router.push('search')
-      },
+    getArticles(){
+        let options = {
+            url: '/apis/article/list',
+            params: {
+                limit: 20,
+                offset: 0,
+                keyword: ''
+            }
+        };
+        GET(options).then(res => {
+            console.log('首页列表', res)
+            this.list = res.data.list;
+        }).catch(err => {
+            console.log('首页列表-err', err)
+            // this.list = []; // 搜索出错要现实空白？
+        })
+    },
+    //   onSearch(){
+    //       this.$router.push('search')
+    //   },
 
       onLoad(){
           setTimeout(() => {
@@ -74,6 +109,11 @@ export default {
       onRefresh(){
           this.count++
           this.isLoading = false
+      },
+      toPage(e) {
+          let path = e.target.dataset.path;
+          console.log(122222222222222222222,e.target)
+          this.$router.push(path);
       }
   },
   components: {}
@@ -101,5 +141,40 @@ export default {
             }
         }
     }
+    .header-nav{
+        width: 100%;
+        height: 100px;
+        overflow: hidden;
+        background: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1570376536912&di=cffa68c3c5d90391e3a4967dffb3eba7&imgtype=0&src=http%3A%2F%2Fd.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fb8014a90f603738df2ce9c71b51bb051f919ecd9.jpg') no-repeat;
+        background-size: 100% 100%;
+        .header-container{
+            padding: 20px;
+            line-height: 40px;
+            .nav-item__left{
+                float:left;
+                width: 80%;
+                text-align: left;
+                .text{
+                    font-size: 32px;
+                    padding: 0 40px 0 0;
+                    color: #fff;
+                }
+                .selected{
+                    font-size: 50px;
+                    font-weight: bold;
+                }
+            }
+            .nav-item__right{
+                display: flex;
+                display: -webkit-flex;
+                justify-content: space-around;
+                img{
+                    width: 40px;
+                    height: 40px;
+                }
+            }
+        }
+    }
+    
 
 </style>

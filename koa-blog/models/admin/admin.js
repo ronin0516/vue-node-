@@ -13,7 +13,8 @@ const adminSchema = new Schema({
     password: String,
     avatar: String,
     token: String,
-    id: Number,
+    id: String,
+    company: String, // 哪家公司
     city: {
         type: String,
         default: '深圳'

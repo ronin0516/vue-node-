@@ -1,12 +1,12 @@
 <template>
     <div class="list">
-        <div class="container" v-for="item in newList" :key="item.id" 
+        <div class="container" v-for="item in list" :key="item._id" 
         @click="toDetailPage(item)">
             <div class="top">
                 <img class="avatar" :src="item.avatar">
                 <div class="info">
                     <span class="info-username">昵称</span>
-                    <span class="info-time">一天前</span>
+                    <span class="info-time">{{formatDate(item.create_date)}}</span>
                     <div class="info-company">{{item.company}}</div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 
 <script>
 export default {
-  name: 'circleList',
+  name: 'articleList',
   props: {
       list: {
           type: Array,
@@ -52,28 +52,31 @@ export default {
     return {
         isDetailPage: false,
         count:0,
-        newList: [
-            {
-                id: 12,
-                avatar: 'https://ss2.bdstatic.com/6Ot1bjeh1BF3odCf/it/u=1854692222,114449154&fm=74&app=80&f=JPEG&size=f121,140?sec=1880279984&t=750689c181ce34cd3263716d1c94fb30',
-                username: '',
-                company: '自由职业前端开发',
-                date: Date.now(),
-                content: '听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀',
-                comments: 5,
-                approve: 5,
-                images: [
-                    'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1717349155,715302079&fm=26&gp=0.jpg',
-                    'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg',
-                    'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1017742345,2401854046&fm=26&gp=0.jpg',
-                    'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg'
-                ]
-            }
-        ]
+        // newList: Object.freeze(this.list),
+        // [
+            // {
+            //     id: 12,
+            //     avatar: 'https://ss2.bdstatic.com/6Ot1bjeh1BF3odCf/it/u=1854692222,114449154&fm=74&app=80&f=JPEG&size=f121,140?sec=1880279984&t=750689c181ce34cd3263716d1c94fb30',
+            //     username: '',
+            //     company: '自由职业前端开发',
+            //     date: Date.now(),
+            //     content: '听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀',
+            //     comments: 5,
+            //     approve: 5,
+            //     images: [
+            //         'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1717349155,715302079&fm=26&gp=0.jpg',
+            //         'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg',
+            //         'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1017742345,2401854046&fm=26&gp=0.jpg',
+            //         'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg'
+            //     ]
+            // }
+        // ]
     };
   },
   computed: {},
-  created() {},
+  created() {
+      this.newList = Object.freeze(this.list)
+  },
   mounted() {},
   watch: {},
   methods: {
@@ -95,7 +98,7 @@ export default {
         this.$router.push({
             name: 'detail',
             params: {
-                id: item.id
+                id: item._id
             }
         })
     }
@@ -105,9 +108,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-    // .container{
-    //     // background: #f5f5f5;
-    // }
+    .container{
+        // background: #f5f5f5;
+        margin-top: 40px;
+    }
     .top{
         width: 100%;
         height: 100px;

@@ -5,7 +5,7 @@
                 <img class="avatar" :src="detail.avatar">
                 <div class="info">
                     <span class="info-username">昵称</span>
-                    <span class="info-time">一天前</span>
+                    <span class="info-time">{{formatDate(detail.create_date)}}</span>
                     <div class="info-company">{{detail.company}}</div>
                 </div>
             </div>
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import {GET, POST} from '../../common/axios';
 export default {
   name: 'circleList',
   props: {
@@ -48,42 +49,47 @@ export default {
         isDetailPage: false,
         count:0,
         detail: {
-                id: 12,
-                avatar: 'https://ss2.bdstatic.com/6Ot1bjeh1BF3odCf/it/u=1854692222,114449154&fm=74&app=80&f=JPEG&size=f121,140?sec=1880279984&t=750689c181ce34cd3263716d1c94fb30',
-                username: '',
-                company: '自由职业前端开发',
-                date: Date.now(),
-                content: '听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀',
-                comments: 5,
-                approve: 5,
-                images: [
-                    'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1717349155,715302079&fm=26&gp=0.jpg',
-                    'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg',
-                    'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1017742345,2401854046&fm=26&gp=0.jpg',
-                    'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg'
-                ]
+                // id: 12,
+                // avatar: 'https://ss2.bdstatic.com/6Ot1bjeh1BF3odCf/it/u=1854692222,114449154&fm=74&app=80&f=JPEG&size=f121,140?sec=1880279984&t=750689c181ce34cd3263716d1c94fb30',
+                // username: '',
+                // company: '自由职业前端开发',
+                // date: Date.now(),
+                // content: '听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀听说哪哪开了一家很好吃的店，改天有空去尝尝呀',
+                // comments: 5,
+                // approve: 5,
+                // images: [
+                //     'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1717349155,715302079&fm=26&gp=0.jpg',
+                //     'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg',
+                //     'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1017742345,2401854046&fm=26&gp=0.jpg',
+                //     'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4169342964,2265822782&fm=26&gp=0.jpg'
+                // ]
             }
     };
   },
   computed: {},
-  created() {},
+  created() {
+      console.log('获取动态参数', this.$router.history.current.params.id)
+      this.getDetail()
+  },
   mounted() {},
   watch: {},
   methods: {
-    //   onLoad(){
-    //       setTimeout(() => {
-    //           for(let i = 0; i < 10; i++) {
-    //             //   this.newList = this.newList.concat(this.newList)
-    //           }
-    //           this.loading = false;
-              
-    //       }, 500) 
-
-    //   },
-    //   onRefresh(){
-    //       this.count++
-    //       this.isLoading = false
-    //   }
+    getDetail(){
+        let options = {
+            url: '/apis/article/detail',
+            params: {id: this.$router.history.current.params.id}
+        };
+        GET(options).then(res => {
+            if(res.data.code == 200) {
+                this.detail = res.data.data
+                
+            } else {
+                this.$toast("参数错误")
+            }
+        }).catch(err => {
+            this.$toast(err.data.message)
+        })
+    }
   },
   components: {}
 };
