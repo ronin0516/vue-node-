@@ -13,6 +13,7 @@ const ArticleScheme = new Schema({
     approve: {type: Number, default: 0}, // 点赞数
     comments: {type: Number, default: 0},// 评论数
     anonymous: {type: Number, default: false}, // 是否匿名发布
+    user: {type: Number, ref: 'admin'}
 });
 
 

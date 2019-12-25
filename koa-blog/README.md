@@ -180,10 +180,109 @@ Tom 所在学校为：Test，所在城市为：北京
 
 
 
+    查询
+        
+        Model.find({}， '-_id')表示查找出来的数据去掉_id这个参数
+        Model.find({'skus.id': id}): foods = {id:1, skus: [{id: 1}]}。查找数组
 
 
+    更新或创建
+        category.foods.push(food);
+        category.markModified('foods'); // 使用save方式保存对象的数据，需要使用markModified以完成修改操作。 否则无法嵌套数据
+        category.save()
+    
 
 
+    条件查询
+        根据名称、类别喝时间进行搜索查询。
+
+        下面的方案在单个条件进行判断时，这样处理没有任何问题。
+        Model.$where('this.idnum == "' + idnum + '"').exec(function(){})
+
+        多个条件查询
+        Model.find({name: 'name', age: 18, sex: 1});这种方式
+
+
+    
+
+    修改器和更新器
+
+        更新修改器
+
+            $inc：增减修改器，只对数字有效。下面实例：找到age=22的文档，修改文档的age值自增1
+                Model.update({'age': 22}, {'$inc': {'age': 1}}) 执行后: age = 23
+
+            $set：指定一个键的值，这个键不存在就创建它，可以是任何MongoDB支持的类型
+                Model.update({'age': 22}, {'$set': {'age': 'haha'}}); 执行后age = 'haha'
+
+            $unset: 跟$set取反，删除一个键
+                Model.update({'age': 20}, {'$unset': {'age': '哈哈'}}) ;执行后，age键不存在
+
+        
+        数组修改器
+
+            $push: 给一个键push一个数组成员，键不存在回创建键
+
+                Model.update({'age': 22}, {'$push': {'array': 10}}) // 执行后：增加一个Array键，类型为数组，有一个成员 10
+
+            $addToSet：向数组中添加一个元素，如果不存在就不添加
+
+                Model.update({'age': 20}, {'$addToSet': {'array': 10}})// 执行后，array中有10所以不会添加
+
+            $each：遍历数组，和$push修改器配合可以插入多个值
+
+                Model.update({'age': 22}, {'$push': {'array': {'$each': [1,2,3,4,5]}}}) // 执行后array = [10, 1, 2, 3, 4, 5]
+
+            $pop：向数组尾部删除一个元素
+
+                Model.update({'age': 22}, {'$pop': {'array': 1}}) 执行后 array: [10,1,2,3,4]。tips：将1改成-1可以删除数组首部元素
+
+            $pull向数组中删除指定元素
+                Model.update({'age': 22}, {'$pull': {'array': 10}}); 执行后，array: [1,2,3,4]匹配到array中的10后将其删除
+
+
+        条件查询
+
+            $lt: 小于
+            $lte：小于等于
+            $gt：大于
+            $gte：大于等于
+            $ne：不等于
+
+            Model.find({'age': {'$gte': 18, '$lte'}}) 查询大于等于18 并小于等于30的文档
+
+        或查询 
+            $in 一个键对应多个值
+            $nin：同上取反，一个键不对应指定值
+            $or：多个条件匹配，可以嵌套$in使用
+            $not：同上取反，查询与特定模式不匹配的文档
+
+            Model.find({'age': {'$in': [20, 21,22,'haha']}}) 查找age等于 20 21 22 或haha的文档
+
+            Model.find({'$or': [ {'age': 18} , {'name': 'xueyou'} ] }) 查询age等于18，或name等于xueyou的文档
+
+
+        类型查询
+
+            null能匹配自身和不存在的值，想要匹配键的值为null，就要通过 $exists 条件判断键值已经存在 $exists表示是否存在的意思。
+
+            Model.find({'age': {'$in': [null], '$exists': true}}) 查询age值为null的文档
+
+            Model.find({'name': {'$exists': true}}, function(err, docs){}) // 查询所有存在name属性的文档
+            
+            Model.find({'telephone': {'$exists': false}}, function(err, docs){}) // 查询所有不存在telephone属性的文档
+            
+    正则表达式
+
+        MongoDB使用Prel兼容的正则表达式库来匹配正则表达式
+
+            find({'name': /joe/i})  查询name为joe的文档，并忽略大小写
+
+            find({'name': /joe?/i}) 查询匹配各种大小写组合
+
+    $where
+
+    Model.findOneAndUpdate(conditions, {$set: })
 
 
 

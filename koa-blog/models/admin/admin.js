@@ -9,12 +9,12 @@ const Schema = mongoose.Schema;
  */
 
 const adminSchema = new Schema({
-    username: String,
-    password: String,
-    avatar: String,
-    token: String,
-    id: String,
-    company: String, // 哪家公司
+    username: {type: String, default: '包租公'},
+    password: {type: String, default: '123456'},
+    avatar: {type: String, default: 'default.png'},
+    token: {type: String, default: 'werghrthtre'},
+    id: {type: String, default: '1'},
+    company: {type: String, default: '自由职业'}, // 哪家公司
     city: {
         type: String,
         default: '深圳'
@@ -22,7 +22,10 @@ const adminSchema = new Schema({
     create_date: {
         type: Date,
         default: Date.now()
-    }
+    },
+    article_id: Number,
+    // articles: [{type: Schema.Types.ObjectId, ref: 'article'}]
+    // articles: [{type: String, ref: 'article'}]
 });
 
 adminSchema.index({id:1}); // 建索引

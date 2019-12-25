@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>vue3-meituan</title>
+    <script></script>
   </head>
   <body>
     <noscript>
@@ -13,5 +14,26 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script>
+      !(function (c, i, e, b) { 
+        var h = i.createElement("script"); 
+        var f = i.getElementsByTagName("script")[0]; 
+        h.type = "text/javascript"; 
+        h.crossorigin = true; 
+        h.onload = function () { 
+            try { 
+                c[b] || (c[b] = new c.wpkReporter({ 
+                    bid: '491c947d-l711vd0i', 
+                    spa: true, 
+                    rel: '', 
+                    plugins: [] })); 
+                    c[b].installAll(); 
+            } catch (e) { 
+              console.error('init wpkReporter fail', e); 
+            } 
+          }; 
+          f.parentNode.insertBefore(h, f); 
+          h.src = e })(window, document, "https://g.alicdn.com/woodpeckerx/jssdk??wpkReporter.js", "__wpk");
+    </script>
   </body>
 </html>

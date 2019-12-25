@@ -1,27 +1,31 @@
 
 
-const ArticleSchema = require('../../models/admin/article.js');
-const AdminSchema = require('../../models/admin/admin');
+const ArticleModel = require('../../models/admin/article.js');
+const AdminModel = require('../../models/admin/admin');
 const url = require('url');
 // const ObjectId = require('mongodb').ObjectId;  ObjectId(id)
 const mongoose = require('mongoose');
-
+const ObjectId = require('mongodb').ObjectId; // ObjectId(id)
 class Article{
     constructor(){
         this.createArticle = this.createArticle.bind(this);
     }
 
     async createArticle(ctx,next) {
-        console.log("发布文章请求接进来没有")
+        let user_id = ctx.session.user_id;
+        
+        let user = await AdminModel.findOne({id: user_id});
+        console.log("发布文章请求接进来没有", user_id, user.article_id);
+
         let {content, imageList, anonymous} = ctx.request.body;
         let createData = {
             content,
             images: imageList,
             anonymous,
-            user_id: ctx.session.user_id
+            user_id: ctx.session.user_id,
+            user: user.article_id
         }
-        console.log(content, imageList)
-        let article = await new ArticleSchema(createData).save();
+        let article = await new ArticleModel(createData).save();
         if(article) {
             ctx.body = {
                 data: {
@@ -49,33 +53,34 @@ class Article{
         let {offset , limit , keyword} = ctx.request.body;
         let promiseArr = [], reg = new RegExp(keyword, 'i');
 
-        // promiseArr.push(AdminSchema.findOne({username: keyword}, {'id': ''}));
-        // promiseArr.push(ArticleSchema.find(
-        //     {
-        //         $or: [{content: {$regex: reg}}]
-        //     },
-        //     {},
-        //     {
-        //         sort: { '_id' : 1}, // 按照_id升序排序
-        //         limit: (limit + 20) // 查询多少条
-        //     }
-        //     ))
-        let articles = await ArticleSchema.find(
+        console.log('keyword', keyword)
+        let user = await AdminModel.findOne({id: ctx.session.user_id})
+        console.log('==========================',keyword, user.article_id) 
+        let articles = await ArticleModel.find(
             {
-                $or: [{content: {$regex: reg}}]
+                'content': {$regex: reg}
+                // $or: [{content: {$regex: reg}}],
+                // user_id: ctx.session.user_id
             },
             {},
             {
-                sort: { '_id' : 1}, // 按照_id升序排序
-                limit: (limit + 20), // 查询多少条
-                offset: offset+ 20,  // 从哪开始查起
+                sort: { 'create_date' : -1}, // 按照_id升序排序
+                // limit: (limit + 20), // 查询多少条
+                // offset: offset+ 20,  // 从哪开始查起
             }
-            );
+            )
+            // .populate('user')
+            // .exec(function(err, article){
+            //     console.log('----1234567890--------', article)
+            // });
+        
+        // console.log('populate--------------', articles.user)
         if(articles && articles.length) {
             ctx.body = {
                 data: {
                     code: 200,
                     list: articles,
+                    user: articles[0].user
                 }
             }
         } else {
@@ -87,7 +92,7 @@ class Article{
             }
         }
        
-        console.log('查询结果', articles)
+        // console.log('查询结果', articles)
             
 
     }
@@ -95,7 +100,7 @@ class Article{
     async getArticleDetail(ctx, next) {
         let query = url.parse(ctx.request.url, true).query;
         console.log('前端传过来的参数', query)
-        let article = await ArticleSchema.findById({'_id': mongoose.Types.ObjectId(query.id)});
+        let article = await ArticleModel.findById({'_id': mongoose.Types.ObjectId(query.id)});
         console.log('数据库查询结果', article)
         if(article) {
             ctx.body = {
